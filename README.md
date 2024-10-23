@@ -9,6 +9,7 @@ Events application made with VueJS + Vite + Typescript + Pinia + VueRouter
 - VueJS v3.5.12
 - Pinia v2.2.4
 - VueRouter v4.4.5
+- Vite v5.4.8
 
 ### Additional dependencies:
 
