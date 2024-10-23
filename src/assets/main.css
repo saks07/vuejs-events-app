@@ -1,0 +1,18 @@
+@import './base.css';
+
+.container {
+  position: relative;
+  width: 100%;
+}
+
+.wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: 2rem;
+}
+
+main {
+  min-height: 75vh;
+}

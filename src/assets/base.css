@@ -1,0 +1,71 @@
+:root {
+  --primary-color: #b91c1c;
+  --primary-color-500: #ef4444;
+  --color-main: #353535;
+  --color-white: #fff;
+  --bg-color-main: #f0f0f0;
+  --bg-color-white: #fff;
+  --border-radius: 0.4rem;
+  --border-radius-sm: 0.2rem;
+  --border-input-color: #c0c0c0;
+  --border-input-color-focus: var(--primary-color);
+  --border-color-default: #d0d0d0;
+
+  --message-success-bg: #dcfce7;
+  --message-success-color: #15803d;
+  --message-success-border-color: #16a34a;
+
+  --message-error-bg: #fee2e2;
+  --message-error-color: #b91c1c;
+  --message-error-border-color: #dc2626;
+
+  --message-warning-bg: #fef3c7;
+  --message-warning-color: #b45309;
+  --message-warning-border-color: #d97706;
+
+  --message-info-bg: #e0f2fe;
+  --message-info-color: #0369a1;
+  --message-info-border-color: #0284c7;
+
+  --color-black-50: rgba(0, 0, 0, 0.05);
+  --color-black-100: rgba(0, 0, 0, 0.1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  font-weight: normal;
+}
+
+html {
+  font-size: 10px;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--color-main);
+  background: var(--bg-color-main);
+  transition:
+    color 0.5s,
+    background-color 0.5s;
+  line-height: 1.6;
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    'Fira Sans',
+    'Droid Sans',
+    'Helvetica Neue',
+    sans-serif;
+  font-size: 1.6rem;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
