@@ -1,12 +1,9 @@
 export type ResultError = {
+  error?: string
   message: string
-  error: string
   statusCode: number
 }
 
 export type Result<T> = {
   data?: T
-  message: string
-  error?: string
-  statusCode: number
-}
+} & ResultError

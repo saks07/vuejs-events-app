@@ -2,6 +2,7 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useHttp } from '@/composables/http.composable'
 import type { AdEvent, FormDataEvent } from '@/types/ad-event.type'
+import type { Result } from '@/types/app.type'
 
 const HOST = import.meta.env.VITE_API_BASE_URL
 const endpoints = {
@@ -24,32 +25,52 @@ export const useAdEventStore = defineStore('ad-event', () => {
 
   // ACTIONS
   const getEvents = async (): Promise<void> => {
-    const result = await getReq<AdEvent[]>(endpoints.getEvents)
+    try {
+      const result = await getReq<Result<AdEvent[]>>(endpoints.getEvents)
+      if (result.data) {
+        setStateEvents(result.data)
+        return
+      }
 
-    if (result.data) {
-      setStateEvents(result.data)
-    } else {
+      setStateEvents([])
+    } catch (err: unknown) {
+      console.error(err)
       setStateEvents([])
     }
   }
 
   const getEvent = async (id: string): Promise<void> => {
-    if (!id || !Number(id)) {
-      throw new Error('Missing id')
-    }
-    const result = await getReq<AdEvent>(endpoints.getEvent.replace('{id}', id))
-    if (result.data) {
-      setStateEvent(result.data)
-    } else {
+    try {
+      if (!id || !Number(id)) {
+        throw new Error('Missing or invalid id')
+      }
+
+      const result = await getReq<Result<AdEvent>>(
+        endpoints.getEvent.replace('{id}', id),
+      )
+      if (result.data) {
+        setStateEvent(result.data)
+        return
+      }
+
+      setStateEvent(null)
+    } catch (err: unknown) {
+      console.error(err)
       setStateEvent(null)
     }
   }
 
   const createEvent = async (body: FormDataEvent): Promise<void> => {
-    const result = await postReq<AdEvent>(endpoints.createEvent, body)
-    if (result.data) {
-      setStateNewEvent(result.data)
-    } else {
+    try {
+      const result = await postReq<Result<AdEvent>>(endpoints.createEvent, body)
+      if (result.data) {
+        setStateNewEvent(result.data)
+        return
+      }
+
+      setStateNewEvent(null)
+    } catch (err: unknown) {
+      console.error(err)
       setStateNewEvent(null)
     }
   }
@@ -58,31 +79,44 @@ export const useAdEventStore = defineStore('ad-event', () => {
     id: string,
     body: FormDataEvent,
   ): Promise<void> => {
-    if (!id || !Number(id)) {
-      throw new Error('Missing id')
-    }
-    const result = await patchReq<AdEvent>(
-      endpoints.updateEvent.replace('{id}', id),
-      body,
-    )
+    try {
+      if (!id || !Number(id)) {
+        throw new Error('Missing or invalid id')
+      }
 
-    if (result.data) {
-      setStateUpdatedEvent(result.data)
-    } else {
+      const result = await patchReq<Result<AdEvent>>(
+        endpoints.updateEvent.replace('{id}', id),
+        body,
+      )
+      if (result.data) {
+        setStateUpdatedEvent(result.data)
+        return
+      }
+
+      setStateUpdatedEvent(null)
+    } catch (err: unknown) {
+      console.error(err)
       setStateUpdatedEvent(null)
     }
   }
 
   const deleteEvent = async (id: number): Promise<void> => {
-    if (!id || !Number(id)) {
-      throw new Error('Missing id')
-    }
-    const result = await deleteReq<AdEvent>(
-      endpoints.deleteEvent.replace('{id}', id.toString()),
-    )
-    if (result.data) {
-      setStateDeletedEvent(result.data)
-    } else {
+    try {
+      if (!id || !Number(id)) {
+        throw new Error('Missing or invalid id')
+      }
+
+      const result = await deleteReq<Result<AdEvent>>(
+        endpoints.deleteEvent.replace('{id}', id.toString()),
+      )
+      if (result.data) {
+        setStateDeletedEvent(result.data)
+        return
+      }
+
+      setStateDeletedEvent(null)
+    } catch (err: unknown) {
+      console.error(err)
       setStateDeletedEvent(null)
     }
   }

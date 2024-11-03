@@ -5,6 +5,7 @@ import { IpAPIFields } from '@/enum/user.enum'
 import type { Fun7Ad, UserGeolocation } from '@/types/user.type'
 import { useLocalStorage } from '@/composables/localStorage.composable'
 import { LocalStorageKeys } from '@/enum/app.enum'
+import type { Result } from '@/types/app.type'
 
 const HOST = import.meta.env.VITE_API_BASE_URL
 const endpoints = {
@@ -24,44 +25,65 @@ export const useUserStore = defineStore('user', () => {
   const getGeolocation = async (
     filedsValues?: IpAPIFields[],
   ): Promise<void> => {
-    const checkGeolocation = getLocalStorage(LocalStorageKeys.GEOLOCATION)
-    if (checkGeolocation) {
-      setStateGeolocation(JSON.parse(checkGeolocation))
-      return
-    }
+    try {
+      const checkGeolocation = getLocalStorage(LocalStorageKeys.GEOLOCATION)
+      if (checkGeolocation) {
+        setStateGeolocation(JSON.parse(checkGeolocation))
+        return
+      }
 
-    let baseUrl = endpoints.geolocation
-    if (filedsValues) {
-      baseUrl = `${baseUrl}?fields=${filedsValues.join(',')}`
-    }
-    const result = await getReq<UserGeolocation | null>(baseUrl)
-    if (result.data) {
-      setStateGeolocation(result.data)
-      setLocalStorage(LocalStorageKeys.GEOLOCATION, JSON.stringify(result.data))
-    } else {
+      let baseUrl = endpoints.geolocation
+      if (filedsValues) {
+        baseUrl = `${baseUrl}?fields=${filedsValues.join(',')}`
+      }
+
+      const result = await getReq<Result<UserGeolocation | null>>(baseUrl)
+      if (result.data) {
+        setStateGeolocation(result.data)
+        setLocalStorage(
+          LocalStorageKeys.GEOLOCATION,
+          JSON.stringify(result.data),
+        )
+        return
+      }
+
+      setStateGeolocation(null)
+    } catch (err: unknown) {
+      console.error(err)
       setStateGeolocation(null)
     }
   }
 
   const getAdsData = async (countryCode: string): Promise<void> => {
-    if (!countryCode) {
-      return
-    }
+    try {
+      if (!countryCode) {
+        throw new Error('Missing country code!')
+      }
 
-    const checkAdsPermission = getLocalStorage(LocalStorageKeys.ADS_PERMISSION)
-    if (checkAdsPermission) {
-      setStateGeolocation(JSON.parse(checkAdsPermission))
-      return
-    }
-
-    const result = await getReq<Fun7Ad | null>(`${endpoints.ads}${countryCode}`)
-    if (result.data) {
-      setStateAds(result.data)
-      setLocalStorage(
+      const checkAdsPermission = getLocalStorage(
         LocalStorageKeys.ADS_PERMISSION,
-        JSON.stringify(result.data),
       )
-    } else {
+      if (checkAdsPermission) {
+        setStateGeolocation(JSON.parse(checkAdsPermission))
+        return
+      }
+
+      const result = await getReq<Result<Fun7Ad | null>>(
+        `${endpoints.ads}${countryCode}`,
+      )
+      if (result.data) {
+        setStateAds(result.data)
+        setLocalStorage(
+          LocalStorageKeys.ADS_PERMISSION,
+          JSON.stringify(result.data),
+        )
+
+        return
+      }
+
+      setStateAds(null)
+    } catch (err: unknown) {
+      console.error(err)
       setStateAds(null)
     }
   }
